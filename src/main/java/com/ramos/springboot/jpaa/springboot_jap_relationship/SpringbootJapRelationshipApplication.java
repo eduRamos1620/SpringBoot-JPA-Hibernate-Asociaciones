@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootApplication
 public class SpringbootJapRelationshipApplication implements CommandLineRunner{
@@ -29,6 +30,7 @@ public class SpringbootJapRelationshipApplication implements CommandLineRunner{
 		manyToOneFindByIdClient();
 	}
 
+	@Transactional
 	public void manyToOne(){
 		Client client = new Client("Juan", "Sanchez");//se crea el cliente
 		clientRepository.save(client);//se guarda el cliente en BD
@@ -39,6 +41,7 @@ public class SpringbootJapRelationshipApplication implements CommandLineRunner{
 		System.out.println(invoiceDB);
 	}
 
+	@Transactional
 	public void manyToOneFindByIdClient(){
 		Optional<Client> optionalClient = clientRepository.findById(1L); //se obtiene el cliente desde la Bd por su id
 
