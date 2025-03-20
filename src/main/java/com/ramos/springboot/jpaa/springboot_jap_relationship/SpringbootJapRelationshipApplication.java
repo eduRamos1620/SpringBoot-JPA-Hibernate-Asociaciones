@@ -6,6 +6,7 @@ import com.ramos.springboot.jpaa.springboot_jap_relationship.entities.Invoice;
 import com.ramos.springboot.jpaa.springboot_jap_relationship.repositories.ClientRepository;
 import com.ramos.springboot.jpaa.springboot_jap_relationship.repositories.InvoiceRepository;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class SpringbootJapRelationshipApplication implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws Exception {
-		oneToMany();
+		oneToManyFindById();
 	}
 
 	@Transactional
@@ -44,6 +45,23 @@ public class SpringbootJapRelationshipApplication implements CommandLineRunner{
 		clientRepository.save(client);//Se guarda el cliente con sus direcciones en la BD
 
 		System.out.println(client);
+	}
+
+	@Transactional
+	public void oneToManyFindById(){
+		Optional<Client> optionalClient  = clientRepository.findById(2L);
+		optionalClient.ifPresent(client -> {
+			Address address1 = new Address("Centro", 123);//Se crea una direccion
+			Address address2 = new Address("camino viejo", 1234);//Se crea una segunda direccion
+	
+			client.setAddresses(Arrays.asList(address1, address2));
+	
+			clientRepository.save(client);//Se guarda el cliente con sus direcciones en la BD
+	
+			System.out.println(client);
+
+		});
+
 	}
 
 	@Transactional
