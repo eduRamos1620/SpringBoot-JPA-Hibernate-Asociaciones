@@ -1,5 +1,6 @@
 package com.ramos.springboot.jpaa.springboot_jap_relationship;
 
+import com.ramos.springboot.jpaa.springboot_jap_relationship.entities.Address;
 import com.ramos.springboot.jpaa.springboot_jap_relationship.entities.Client;
 import com.ramos.springboot.jpaa.springboot_jap_relationship.entities.Invoice;
 import com.ramos.springboot.jpaa.springboot_jap_relationship.repositories.ClientRepository;
@@ -27,7 +28,22 @@ public class SpringbootJapRelationshipApplication implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws Exception {
-		manyToOneFindByIdClient();
+		oneToMany();
+	}
+
+	@Transactional
+	public void oneToMany(){
+		Client client = new Client("Josefa", "Ortiz");//Se crea el cliente
+
+		Address address1 = new Address("Centro", 123);//Se crea una direccion
+		Address address2 = new Address("camino viejo", 1234);//Se crea una segunda direccion
+
+		client.getAddresses().add(address1);//Se agrega la primer direccion a la lista
+		client.getAddresses().add(address2);//Se agrega la segunda direccion a la lista
+
+		clientRepository.save(client);//Se guarda el cliente con sus direcciones en la BD
+
+		System.out.println(client);
 	}
 
 	@Transactional
