@@ -9,8 +9,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "clients")
@@ -22,8 +24,13 @@ public class Client {
     private String name;
     private String lastname;
 
+    //@JoinColumn(name = "client_id")//para que la fk se cree en la tabla y no en una externa
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "client_id")//para que la fk se cree en la tabla y no en una externa
+    @JoinTable(
+        name = "tbl_clientes_to_direcciones", 
+        joinColumns = @JoinColumn(name = "id_cliente"),
+        inverseJoinColumns = @JoinColumn(name = "id_direcciones"),
+        uniqueConstraints = @UniqueConstraint(columnNames = {"id_direcciones"}))//se crea la tabla de relacion 
     private List<Address> addresses;
     //Constructores -----------------------------------------------
     public Client(){
