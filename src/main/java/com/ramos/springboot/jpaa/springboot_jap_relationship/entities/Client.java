@@ -76,6 +76,5 @@ public class Client {
     public String toString() {
         return "[id=" + id + ", name=" + name + ", lastname=" + lastname + " , addresses= " + addresses + "]";
     }
-
     
 }
