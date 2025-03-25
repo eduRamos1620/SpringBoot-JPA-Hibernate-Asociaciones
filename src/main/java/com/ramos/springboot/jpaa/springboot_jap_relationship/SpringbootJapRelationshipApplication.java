@@ -31,7 +31,63 @@ public class SpringbootJapRelationshipApplication implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws Exception {
-		oneToManyBidireccionalFindById();
+		oneToManyRemoveBidireccionalFindById();
+	}
+
+	@Transactional
+	public void removeBidireccional(){
+		Optional<Client> optionalClient = clientRepository.findOne(1L);
+
+		optionalClient.ifPresent(client -> {
+			Invoice invoice1 = new Invoice("Compras de juegos", 399L);
+			Invoice invoice2 = new Invoice("Compras de oficina", 8999L);
+
+			client.addInvoice(invoice1).addInvoice(invoice2);
+
+			Client clientDB = clientRepository.save(client);
+
+			System.out.println(clientDB);
+		});
+
+		Optional<Client> optionalClient2 = clientRepository.findOne(1L);
+
+		optionalClient2.ifPresent(client -> {
+			Optional<Invoice> invOptional = invoiceRepository.findById(2L);
+			invOptional.ifPresent(invoice -> {
+				client.getInvoices().remove(invoice);
+				invoice.setClient(null);
+				clientRepository.save(client);
+				System.out.println(client);
+			});
+		});
+	}
+
+	@Transactional
+	public void oneToManyRemoveBidireccionalFindById(){
+		Optional<Client> optionalClient = clientRepository.findOne(1L);
+
+		optionalClient.ifPresent(client -> {
+			Invoice invoice1 = new Invoice("Compras de juegos", 399L);
+			Invoice invoice2 = new Invoice("Compras de oficina", 8999L);
+
+			client.addInvoice(invoice1).addInvoice(invoice2);
+
+			Client clientDB = clientRepository.save(client);
+
+			System.out.println(clientDB);
+		});
+
+		Optional<Client> optionalClient2 = clientRepository.findOne(1L);
+
+		optionalClient2.ifPresent(client -> {
+			Optional<Invoice> invOptional = invoiceRepository.findById(2L);
+			invOptional.ifPresent(invoice -> {
+				client.getInvoices().remove(invoice);
+				invoice.setClient(null);
+				clientRepository.save(client);
+				System.out.println(client);
+			});
+		});
 	}
 
 	@Transactional
