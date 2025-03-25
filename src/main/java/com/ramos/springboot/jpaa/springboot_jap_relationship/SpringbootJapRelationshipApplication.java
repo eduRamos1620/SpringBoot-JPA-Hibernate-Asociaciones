@@ -6,9 +6,10 @@ import com.ramos.springboot.jpaa.springboot_jap_relationship.entities.Invoice;
 import com.ramos.springboot.jpaa.springboot_jap_relationship.repositories.ClientRepository;
 import com.ramos.springboot.jpaa.springboot_jap_relationship.repositories.InvoiceRepository;
 
-import java.util.Arrays;
-import java.util.Optional;
 
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -30,7 +31,38 @@ public class SpringbootJapRelationshipApplication implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws Exception {
-		removeAddressFindById();
+		oneToManyBidireccionalFindById();
+	}
+
+	@Transactional
+	public void oneToManyBidireccionalFindById(){
+		Optional<Client> optionalClient = clientRepository.findOne(1L);
+
+		optionalClient.ifPresent(client -> {
+			Invoice invoice1 = new Invoice("Compras de juegos", 399L);
+			Invoice invoice2 = new Invoice("Compras de oficina", 8999L);
+
+			client.addInvoice(invoice1).addInvoice(invoice2);
+
+			Client clientDB = clientRepository.save(client);
+
+			System.out.println(clientDB);
+		});
+	}
+
+	@Transactional
+	public void oneToManyBidireccional(){
+		Client client = new Client("Josefa", "Ortiz");//Se crea el cliente
+
+		Invoice invoice1 = new Invoice("Compras de juegos", 399L);
+		Invoice invoice2 = new Invoice("Compras de oficina", 8999L);
+
+		
+		client.addInvoice(invoice1).addInvoice(invoice2);
+
+		clientRepository.save(client);
+
+		System.out.println(client);
 	}
 
 	@Transactional
@@ -40,15 +72,18 @@ public class SpringbootJapRelationshipApplication implements CommandLineRunner{
 			Address address1 = new Address("Centro", 123);//Se crea una direccion
 			Address address2 = new Address("camino viejo", 1234);//Se crea una segunda direccion
 	
-			client.setAddresses(Arrays.asList(address1, address2));
+			Set<Address> addresses = new HashSet<>();
+			addresses.add(address1);
+			addresses.add(address2);
+			client.setAddresses(addresses);
 	
 			Client clientDB =  clientRepository.save(client);//Se guarda el cliente con sus direcciones en la BD
 	
 			System.out.println(clientDB);
 
-			Optional<Client> optionalClient2 = clientRepository.findOne(2L);
+			Optional<Client> optionalClient2 = clientRepository.findOneWithAddresses(2L);
 			optionalClient2.ifPresent(c -> {
-				c.getAddresses().remove(1);
+				c.getAddresses().remove(address1);
 				clientRepository.save(c);
 				System.out.println(c);
 			});
@@ -98,7 +133,10 @@ public class SpringbootJapRelationshipApplication implements CommandLineRunner{
 			Address address1 = new Address("Centro", 123);//Se crea una direccion
 			Address address2 = new Address("camino viejo", 1234);//Se crea una segunda direccion
 	
-			client.setAddresses(Arrays.asList(address1, address2));
+			Set<Address> addresses = new HashSet<>();
+			addresses.add(address1);
+			addresses.add(address2);
+			client.setAddresses(addresses);
 	
 			Client clientDB = clientRepository.save(client);//Se guarda el cliente con sus direcciones en la BD
 	
