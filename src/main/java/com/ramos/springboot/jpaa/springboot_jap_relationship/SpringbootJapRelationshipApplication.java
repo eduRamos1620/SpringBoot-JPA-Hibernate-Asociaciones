@@ -41,13 +41,14 @@ public class SpringbootJapRelationshipApplication implements CommandLineRunner{
 
 	@Transactional
 	public void oneToOne(){
+		ClientDetails clientDetails = new ClientDetails(true, 5000);
+		clientDetailsRepository.save(clientDetails);
+
 		Client client = new Client("Miguel", "Hidalgo");
+		client.setClientDetails(clientDetails);
 		clientRepository.save(client);
 
-		ClientDetails clientDetails = new ClientDetails(true, 5000);
-		clientDetails.setClient(client);
-
-		clientDetailsRepository.save(clientDetails);
+		System.out.println(client);
 	}
 
 	@Transactional
