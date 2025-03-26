@@ -2,7 +2,9 @@ package com.ramos.springboot.jpaa.springboot_jap_relationship;
 
 import com.ramos.springboot.jpaa.springboot_jap_relationship.entities.Address;
 import com.ramos.springboot.jpaa.springboot_jap_relationship.entities.Client;
+import com.ramos.springboot.jpaa.springboot_jap_relationship.entities.ClientDetails;
 import com.ramos.springboot.jpaa.springboot_jap_relationship.entities.Invoice;
+import com.ramos.springboot.jpaa.springboot_jap_relationship.repositories.ClientDetailsRepository;
 import com.ramos.springboot.jpaa.springboot_jap_relationship.repositories.ClientRepository;
 import com.ramos.springboot.jpaa.springboot_jap_relationship.repositories.InvoiceRepository;
 
@@ -25,20 +27,33 @@ public class SpringbootJapRelationshipApplication implements CommandLineRunner{
 	@Autowired
 	private InvoiceRepository invoiceRepository;
 
+	@Autowired
+	private ClientDetailsRepository clientDetailsRepository;
+
 	public static void main(String[] args) {
 		SpringApplication.run(SpringbootJapRelationshipApplication.class, args);
 	}
 
 	@Override
 	public void run(String... args) throws Exception {
-		oneToManyRemoveBidireccionalFindById();
+		oneToOne();
+	}
+
+	@Transactional
+	public void oneToOne(){
+		Client client = new Client("Miguel", "Hidalgo");
+		clientRepository.save(client);
+
+		ClientDetails clientDetails = new ClientDetails(true, 5000);
+		clientDetails.setClient(client);
+
+		clientDetailsRepository.save(clientDetails);
 	}
 
 	@Transactional
 	public void removeBidireccional(){
-		Optional<Client> optionalClient = clientRepository.findOne(1L);
+		Client client = new Client("Josefa", "Ortiz");//Se crea el cliente
 
-		optionalClient.ifPresent(client -> {
 			Invoice invoice1 = new Invoice("Compras de juegos", 399L);
 			Invoice invoice2 = new Invoice("Compras de oficina", 8999L);
 
@@ -47,17 +62,15 @@ public class SpringbootJapRelationshipApplication implements CommandLineRunner{
 			Client clientDB = clientRepository.save(client);
 
 			System.out.println(clientDB);
-		});
 
-		Optional<Client> optionalClient2 = clientRepository.findOne(1L);
-
-		optionalClient2.ifPresent(client -> {
+		Optional<Client> optionalClient2 = clientRepository.findOne(3L);
+		optionalClient2.ifPresent(client2 -> {
 			Optional<Invoice> invOptional = invoiceRepository.findById(2L);
 			invOptional.ifPresent(invoice -> {
-				client.getInvoices().remove(invoice);
+				client2.getInvoices().remove(invoice);
 				invoice.setClient(null);
-				clientRepository.save(client);
-				System.out.println(client);
+				clientRepository.save(client2);
+				System.out.println(client2);
 			});
 		});
 	}
