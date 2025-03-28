@@ -37,7 +37,7 @@ public class Client {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "client")
     private Set<Invoice> invoices;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "client")
     private ClientDetails clientDetails;
 
     //Constructores -----------------------------------------------
