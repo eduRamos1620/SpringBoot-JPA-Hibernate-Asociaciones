@@ -3,11 +3,14 @@ package com.ramos.springboot.jpaa.springboot_jap_relationship;
 import com.ramos.springboot.jpaa.springboot_jap_relationship.entities.Address;
 import com.ramos.springboot.jpaa.springboot_jap_relationship.entities.Client;
 import com.ramos.springboot.jpaa.springboot_jap_relationship.entities.ClientDetails;
+import com.ramos.springboot.jpaa.springboot_jap_relationship.entities.Course;
 import com.ramos.springboot.jpaa.springboot_jap_relationship.entities.Invoice;
+import com.ramos.springboot.jpaa.springboot_jap_relationship.entities.Student;
 import com.ramos.springboot.jpaa.springboot_jap_relationship.repositories.ClientDetailsRepository;
 import com.ramos.springboot.jpaa.springboot_jap_relationship.repositories.ClientRepository;
+import com.ramos.springboot.jpaa.springboot_jap_relationship.repositories.CourseRepository;
 import com.ramos.springboot.jpaa.springboot_jap_relationship.repositories.InvoiceRepository;
-
+import com.ramos.springboot.jpaa.springboot_jap_relationship.repositories.StudentRepository;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -30,13 +33,54 @@ public class SpringbootJapRelationshipApplication implements CommandLineRunner{
 	@Autowired
 	private ClientDetailsRepository clientDetailsRepository;
 
+	@Autowired
+	private StudentRepository studentRepository;
+
+	@Autowired
+	private CourseRepository courseRepository;
+
 	public static void main(String[] args) {
 		SpringApplication.run(SpringbootJapRelationshipApplication.class, args);
 	}
 
 	@Override
 	public void run(String... args) throws Exception {
-		oneToOneBidireccionalFindById();
+		manyToManyFind();
+	}
+
+	public void manyToManyFind(){
+		Optional<Student> studentOptional1 = studentRepository.findById(1L);
+		Optional<Student> studentOptional2 = studentRepository.findById(2L);
+
+		Student student1 = studentOptional1.get();
+		Student student2 = studentOptional2.get();
+
+		Course course1 = courseRepository.findById(1L).get();
+		Course course2 = courseRepository.findById(2L).get();
+
+		student1.setCourses(Set.of(course1, course2));
+		student2.setCourses(Set.of(course2));
+
+		studentRepository.saveAll(Set.of(student1, student2));
+
+		System.out.println(student1);
+		System.out.println(student2);
+	}
+
+	public void manyToMany(){
+		Student student1 = new Student("Isdh", "Dhis");
+		Student student2 = new Student("Eduardo", "Ramos");
+
+		Course course1 = new Course("Java", "Andres");
+		Course course2 = new Course("Python", "Juan");
+
+		student1.setCourses(Set.of(course1, course2));
+		student2.setCourses(Set.of(course2));
+
+		studentRepository.saveAll(Set.of(student1, student2));
+
+		System.out.println(student1);
+		System.out.println(student2);
 	}
 
 	@Transactional
