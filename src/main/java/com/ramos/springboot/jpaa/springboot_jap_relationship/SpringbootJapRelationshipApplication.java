@@ -45,7 +45,57 @@ public class SpringbootJapRelationshipApplication implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws Exception {
-		manyToManyRemoveFind();
+		manyToManyBidireccionalRemove();
+	}
+
+	@Transactional
+	public void manyToManyBidireccionalRemove(){
+		Student student1 = new Student("Isdh", "Dhis");
+		Student student2 = new Student("Eduardo", "Ramos");
+
+		Course course1 = new Course("Java", "Andres");
+		Course course2 = new Course("Python", "Juan");
+
+		student1.addCourse(course1);
+		student1.addCourse(course2);
+		student2.addCourse(course2);
+
+		studentRepository.saveAll(Set.of(student1, student2));
+
+		System.out.println(student1);
+		System.out.println(student2);
+
+		Optional<Student> studentOptionalDb = studentRepository.findOneWithCourse(3L);
+		if (studentOptionalDb.isPresent()) {
+			Student studentDb = studentOptionalDb.get();
+			Optional<Course> courseOptionalDb = courseRepository.findOneWithStudents(1L);
+
+			if (courseOptionalDb.isPresent()) {
+				Course courseDb = courseOptionalDb.get();
+				studentDb.removeCourse(courseDb);
+
+				studentRepository.save(studentDb);
+				System.out.println(studentDb);
+			}
+		}
+	}
+
+	@Transactional
+	public void manyToManyBidireccional(){
+		Student student1 = new Student("Isdh", "Dhis");
+		Student student2 = new Student("Eduardo", "Ramos");
+
+		Course course1 = new Course("Java", "Andres");
+		Course course2 = new Course("Python", "Juan");
+
+		student1.addCourse(course1);
+		student1.addCourse(course2);
+		student2.addCourse(course2);
+
+		studentRepository.saveAll(Set.of(student1, student2));
+
+		System.out.println(student1);
+		System.out.println(student2);
 	}
 
 	@Transactional
